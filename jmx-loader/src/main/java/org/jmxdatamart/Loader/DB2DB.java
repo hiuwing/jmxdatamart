@@ -148,9 +148,7 @@ public class DB2DB {
             DBHandler.addColumn(dataMartConnection, mainTableName, dataMart.getImportedFile(), databaseType);
         }
 
-        Properties merged = new Properties();
-        merged.putAll(dataMart.getAdditional());
-        Enumeration keys = merged.keys();
+        Enumeration keys = dataMart.getAdditional().keys();
         FieldAttribute field;
         while (keys.hasMoreElements()) {
             String col = (String) keys.nextElement();
@@ -176,8 +174,7 @@ public class DB2DB {
                  .append(dataMart.getImportTime().getFieldName());
         StringBuilder questionMarkList = new StringBuilder("?,?,?");
 
-        Properties merged = new Properties();
-        merged.putAll(dataMart.getAdditional());
+        Properties merged = dataMart.getAdditional();
         Enumeration keys = merged.keys();
         String column;
         while (keys.hasMoreElements()) {
