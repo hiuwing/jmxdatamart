@@ -51,6 +51,29 @@ public class DB2DB {
     }
 
     /**
+     * Load one data file to data mart
+     * @param dataMartConnection
+     * @param sourceConnection
+     * @param sourceDatabaseFile  is the filename of the source database
+     * @param sourceDatabaseTables  is the schema of the source database
+     * @param testId
+     * @throws DBException
+     * @throws SQLException
+     */
+    public void loadOneDataFile(Connection dataMartConnection, Connection sourceConnection,
+                                String sourceDatabaseFile, Map<String,Map> sourceDatabaseTables, int testId)
+            throws DBException,SQLException{
+        copyOthersScheme(dataMartConnection,sourceDatabaseTables);
+        loadAllTablesDataExceptMain(sourceConnection, dataMartConnection, testId, sourceDatabaseTables);
+        addMainTableScheme(dataMartConnection);
+        addMainTableData(dataMartConnection, testId, sourceDatabaseFile);
+
+        dataMartConnection.commit();
+        logger.info( sourceDatabaseFile + " is imported to DataMart .\n");
+        //((HypersqlHandler)sources.getSourceDatabase()).shutdownDatabase(sourceConnection);
+    }
+
+    /**
      * Import data from the datafiles to data mart
      * @throws DBException
      * @throws SQLException
@@ -82,14 +105,8 @@ public class DB2DB {
             }
 
             sourceDatabaseTables = DBHandler.getDatabaseSchema(sourceConnection,sourceTableSchem, sourceDatabaseType);
-            copyOthersScheme(dataMartConnection,sourceDatabaseTables);
-            loadAllTablesDataExceptMain(sourceConnection, dataMartConnection, testId, sourceDatabaseTables);
-            addMainTableScheme(dataMartConnection);
-            addMainTableData(dataMartConnection, testId, sourceDatabaseFile);
 
-            dataMartConnection.commit();
-            logger.info( sourceDatabaseFile + " is imported to DataMart .\n");
-            ((HypersqlHandler)sources.getSourceDatabase()).shutdownDatabase(sourceConnection); //need to improve
+            loadOneDataFile( dataMartConnection,  sourceConnection, sourceDatabaseFile, sourceDatabaseTables,  testId);
 
         }
 

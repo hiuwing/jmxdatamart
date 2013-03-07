@@ -34,11 +34,24 @@ import org.jmxdatamart.common.DataType;
 
 public class Setting {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public void setSource(DBInfo source) {
+        this.source = source;
+    }
+
+    public void setTarget(DBInfo target) {
+        this.target = target;
+    }
+
     public class DBInfo {
         private DataType.SupportedDatabase databaseType;
         private String jdbcUrl=null;
         private String databaseName=null;
         private Properties userInfo;
+
+        public void setUserInfo(Properties userInfo) {
+            this.userInfo = userInfo;
+        }
 
         public String getDatabaseName() {
             return databaseName;
@@ -103,7 +116,7 @@ public class Setting {
 
 
     }
-
+    public Setting(){};
     public Setting(String filePath) {
         source = new DBInfo();
         target = new DBInfo();

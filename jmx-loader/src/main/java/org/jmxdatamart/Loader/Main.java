@@ -52,7 +52,7 @@ public class Main {
         }
         File folder = new File(args[1]) ;
         if (!folder.isDirectory()){
-            System.err.println("Invalid folder.");
+            System.err.println("Invalid folder:" + args[1]);
             System.exit(1);
         }
 

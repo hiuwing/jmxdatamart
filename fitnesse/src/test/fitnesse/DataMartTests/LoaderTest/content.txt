@@ -1,0 +1,117 @@
+!contents
+
+
+
+|org.jmxdatamart.fixtures.LoaderTest|
+
+1. First I will assume that we have a Derby database that contains the statistics collected from the Extractor. I call this database as source database.
+
+ Connect to the source database
+
+!|Connect|${derby.url};user=${derby.username};password=${derby.password}|
+
+Let see how many tables are there in the source database.
+!|Query|SELECT tablename FROM SYS.SYStables WHERE tabletype = 'T'|
+|tablename|
+|EXAMPLE_TABLE |
+|A|
+
+Let see what statistics in source database
+
+!|Query| select * from example_table|
+|id|who|place|implement|
+|1|Prof Plum|Library|Candlestick|
+
+Add some new data to this table
+
+|Insert|EXAMPLE_TABLE|
+|id|who|place|when_done|
+|2|C Mustard|Kitchen|!today (yyyy-MM-dd HH:mm:ss)|
+
+|Insert|A|
+|id|who|place|when_done|
+|2|C Mustard|Kitchen|!today (yyyy-MM-dd HH:mm:ss)|
+
+And make sure the new data was added
+
+!|Query| select * from EXAMPLE_TABLE|
+|id|who|place|implement|
+|1|Prof Plum|Library|Candlestick|
+|2|C Mustard|Kitchen|null|
+
+!|Query| select count(*) recordcount from EXAMPLE_TABLE|
+|recordcount|
+|2|
+
+!|Query| select * from A|
+|id|who|place|implement|
+|2|C Mustard|Kitchen|null|
+
+!|Query| select count(*) recordcount from A|
+|recordcount|
+|2|
+
+2. Now work on the data mart database side. I call it target database.
+
+If the data mart is a Microsoft SQL server, the loader will first try to connect the server, and see if the database exists if it's successfully connected. If the database doesn't exist, then the Loader will create a new database.
+But the derby database doesn't have a server to host, so we skip this step, and connect to data mart derby database.
+
+!|Connect|${derby.url1};user=${derby.username};password=${derby.password}|
+
+Let see how many tables are there in the target database.
+!|Query|SELECT count(tablename) as userTableCount FROM SYS.SYStables WHERE tabletype = 'T'|
+|userTableCount|
+|3 |
+
+!|ConfigureLoader|
+|source url   | source user | source password |  target url | target user | target password |
+|${derby.url}|${derby.username}| ${derby.password} | ${derby.url1} | ${derby.username}| ${derby.password}  |
+
+Since this is an empty target database, if we load a source database into the target database, it is considered the first test, which means the next testId should be:
+
+!|TestNextID|
+|getNextTestID|
+|nextID is|5|
+
+!|LoadDataTest|
+|loadADataFile|
+
+!|Connect|${derby.url1};user=${derby.username};password=${derby.password}|
+
+Let's see how many tables are there in the target database.
+!|Query|SELECT count(tablename) as userTableCount FROM SYS.SYStables WHERE tabletype = 'T'|
+|userTableCount|
+|3 |
+
+
+!|Query|SELECT tablename  FROM SYS.SYStables WHERE tabletype = 'T'|
+|tablename|
+|A |
+|EXAMPLE_TABLE|
+|MAINTABLE|
+
+!|Query|SELECT COLUMNNAME FROM SYS.SYSCOLUMNS WHERE REFERENCEID = (SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME = 'MAINTABLE')|
+|columnname|
+|TESTID|
+|IMPORTFILE|
+|IMPORTTIME|
+|OWNER|
+|TEAM|
+|VERSION|
+
+!|Query|SELECT count(*) as testcount from MAINTABLE|
+|testcount|
+|0|
+
+!|Query|SELECT count(*) as testcount from A|
+|testcount|
+|0|
+
+!|Query|SELECT count(*) as testcount from EXAMPLE_TABLE|
+|testcount|
+|0|
+
+!|Connect|${derby.url};user=${derby.username};password=${derby.password}|
+!|Query|SELECT count(*) as testcount from A|
+|testcount|
+|0|

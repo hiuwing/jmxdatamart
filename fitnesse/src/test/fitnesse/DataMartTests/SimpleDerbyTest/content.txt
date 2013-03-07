@@ -24,6 +24,9 @@ Make sure that the table has the contents we expect
 |id|who|place|implement|
 |1|Prof Plum|Library|Candlestick|
 
+!|Query| select count(*) as recordcount from example_table|
+|recordcount|
+|0|
 Add some new data to this table
 
 |Insert|EXAMPLE_TABLE|
@@ -36,3 +39,7 @@ And make sure the new data was added
 |id|who|place|implement|
 |1|Prof Plum|Library|Candlestick|
 |2|C Mustard|Kitchen|null|
+
+!|Query| select count(*) as recordcount from example_table|
+|recordcount|
+|0|

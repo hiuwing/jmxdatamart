@@ -21,6 +21,7 @@
         <fitnesse.root>FitNesseRoot</fitnesse.root>
         <derby.driver>org.apache.derby.jdbc.ClientDriver</derby.driver>
         <derby.url>jdbc:derby://localhost:1527/${project.build.directory}/derbyDB;create=true</derby.url>
+        <derby.url1>jdbc:derby://localhost:1527/${project.build.directory}/derbyDatamartDB;create=true</derby.url1>
         <derby.username>derbyuser</derby.username>
         <derby.password>derbyuser</derby.password>
         <derby.version>10.4.1.3</derby.version>
@@ -210,6 +211,19 @@
                                 <srcFile>src/main/sql/001_init.sql</srcFile>
                             </srcFiles>
                         </configuration>
+                   </execution>
+                    <execution>
+                        <id>derbyDatamartDB</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <driver>${derby.driver}</driver>
+                            <url>${derby.url1}</url>
+                            <username>${derby.username}</username>
+                            <password>${derby.password}</password>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -299,6 +313,16 @@
         <dependency>
             <groupId>org.jmxdatamart</groupId>
             <artifactId>jmx-extractor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmxdatamart</groupId>
+            <artifactId>jmx-loader</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmxdatamart</groupId>
+            <artifactId>jmx-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
