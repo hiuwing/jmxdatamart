@@ -44,6 +44,7 @@ public class MssqlHandler extends DBHandler {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private String jdbcurl ;
+    //Mssql is always public.
     private final String tableSchem = "dbo";
     public String getJdbcurl() {
         return jdbcurl;

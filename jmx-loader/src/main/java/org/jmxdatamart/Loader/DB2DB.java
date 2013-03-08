@@ -70,7 +70,7 @@ public class DB2DB {
 
         dataMartConnection.commit();
         logger.info( sourceDatabaseFile + " is imported to DataMart .\n");
-        //((HypersqlHandler)sources.getSourceDatabase()).shutdownDatabase(sourceConnection);
+        sources.getSourceDatabase().shutdownDatabase(sourceConnection);
     }
 
     /**

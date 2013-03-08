@@ -42,6 +42,9 @@ public class DerbyHandler extends DBHandler{
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private final String protocol = "jdbc:derby:";
+    //this is actually the db user name. if you create a derby database with "derbyuser",
+    //then the tableschema should be "derbyuser" instead of "public"
+    //you should provide this to get the correct schema of the derby database
     private final String tableSchema = "public";
 
     @Override
@@ -49,10 +52,11 @@ public class DerbyHandler extends DBHandler{
         return tableSchema;
     }
 
-    public void shutdownDatabase(String databaseName){
+    @Override
+    public void shutdownDatabase(Object databaseName){
         try
         {
-            DriverManager.getConnection("jdbc:derby:" + databaseName + ";shutdown=true");
+            DriverManager.getConnection("jdbc:derby:" + databaseName.toString() + ";shutdown=true");
 
         }
         catch (SQLException se)

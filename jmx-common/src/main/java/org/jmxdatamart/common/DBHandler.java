@@ -50,7 +50,7 @@ public abstract class DBHandler {
 
   protected String jdbcurl;
 
-
+  public void shutdownDatabase(Object o){};
     /**
    * Used default filed to build a table
    *

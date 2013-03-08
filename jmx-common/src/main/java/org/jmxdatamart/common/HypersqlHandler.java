@@ -14,6 +14,7 @@ public class HypersqlHandler extends DBHandler {
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
   private final String driver = "org.hsqldb.jdbcDriver";
   private final String protocol = "jdbc:hsqldb:";
+  //Hypersql is always public.
   private final String tableSchema = "public";
 
   @Override
@@ -21,12 +22,16 @@ public class HypersqlHandler extends DBHandler {
     return tableSchema;
   }
 
-  public void shutdownDatabase(Connection conn) {
+@Override
+  public void shutdownDatabase(Object conn) {
+    if (!conn.getClass().equals(org.hsqldb.jdbc.JDBCConnection.class))
+        return;
+
     try {
-      if (conn == null || conn.isClosed()) {
+      if (conn == null || ((Connection)conn).isClosed()) {
         return;
       }
-      conn.createStatement().execute("SHUTDOWN");
+        ((Connection)conn).createStatement().execute("SHUTDOWN");
     } catch (SQLException se) {
       logger.error("Can't shutdown the database:" + se.getMessage(), se);
     }
